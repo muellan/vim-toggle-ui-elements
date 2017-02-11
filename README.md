@@ -3,19 +3,19 @@
 This VIM plugin provides the following commands:
 
  - MenuToggle
-   hides/unhides menu in GUI
+   hides/unhides the GUI menu 
 
  - FoldColumnToggle
-   hides/unhides fold column
+   hides/unhides the fold column
 
  - StatusBarToggle
-   hides/unhides status bar
+   hides/unhides the status bar
 
  - TabbarToggle
-   hides/unhides tab bar
+   hides/unhides the tab bar
 
  - SignColumnToggle
-   hides/unhides sign column
+   hides/unhides the sign column
 
  - MaximizeEditAreaToggle:
    hides line numbers, fold column, status bar, tab bar, sign column, fold colum
