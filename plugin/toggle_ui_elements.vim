@@ -1,5 +1,5 @@
 "------------------------------------------------------------------------------
-function! Toggle_Status_Bar()
+function! s:Toggle_Status_Bar()
   if &laststatus == 0
     let &laststatus = 2
   else
@@ -9,7 +9,7 @@ endfunction
 
 
 "------------------------------------------------------------------------------
-function! Toggle_Tabbar()
+function! s:Toggle_Tabbar()
   if &showtabline == 0
     let &showtabline = 2
   else
@@ -19,15 +19,15 @@ endfunction
 
 
 "------------------------------------------------------------------------------
-function! Toggle_Fold_Column()
+function! s:Toggle_Fold_Column()
   if &foldcolumn ># 0
-    let g:toggle_fold_column_last = &foldcolumn
+    let s:toggle_fold_column_last = &foldcolumn
     let &foldcolumn = 0
   else
-    if !exists('g:toggle_fold_column_last')
-      let g:toggle_fold_column_last = 2
+    if !exists('s:toggle_fold_column_last')
+      let s:toggle_fold_column_last = 2
     endif
-    let &foldcolumn = g:toggle_fold_column_last
+    let &foldcolumn = s:toggle_fold_column_last
   endif
 endfunction
 
@@ -45,7 +45,46 @@ endif
 
 
 "------------------------------------------------------------------------------
-function! Toggle_Maximize_Editing_Area()
+command! -nargs=? Ctoggle call <sid>Toggle_Quickfix_List(<q-args>)
+command! -nargs=? Ltoggle call <sid>Toggle_Location_List(<q-args>)
+
+function! s:Toggle_Location_List(...)
+  let l:height = 15
+  if a:0 > 0 | let l:height = a:1 | endif
+  if exists("s:qf_buffer_num")
+    silent! lclose
+  else
+    execute "silent! lopen " . l:height
+  endif
+endfunction
+
+function! s:Toggle_Quickfix_List(...)
+  if a:0 > 0 | let l:height = a:1 | endif
+  if exists("s:qf_buffer_num")
+    silent! cclose
+  else
+    execute "silent! botright copen " . l:height
+  endif
+endfunction
+
+function s:Check_Quickfix()
+  if exists("s:qf_buffer_num") && expand("<abuf>") == s:qf_buffer_num
+    unlet! s:qf_buffer_num
+  endif
+endfunction
+
+function s:qf_buffer_num()
+  let s:qf_buffer_num = bufnr('$')
+endfunction
+
+augroup ListToggleCommands
+  autocmd BufWinEnter quickfix call s:qf_buffer_num()
+  autocmd BufWinLeave *        call s:Check_Quickfix()
+augroup END
+
+
+"------------------------------------------------------------------------------
+function! s:Toggle_Maximize_Editing_Area()
   if !exists('g:maximize_editing_area')
     let g:maximize_editing_area = 0
   endif
@@ -58,6 +97,8 @@ function! Toggle_Maximize_Editing_Area()
     endif
     let g:maximize_editing_area#numbers = &nu
     set nonu
+    let g:maximize_editing_area#relnumbers = &relativenumber
+    set norelativenumber
     let g:maximize_editing_area#tabline = &showtabline
     set showtabline=0
     let g:maximize_editing_area#laststatus = &laststatus
@@ -78,6 +119,7 @@ function! Toggle_Maximize_Editing_Area()
       let &signcolumn = g:maximize_editing_area#signcolumn
     endif
     let &nu = g:maximize_editing_area#numbers
+    let &relativenumber = g:maximize_editing_area#relnumbers
     let &showtabline = g:maximize_editing_area#tabline
     let &laststatus = g:maximize_editing_area#laststatus
     let &foldcolumn = g:maximize_editing_area#foldcol
@@ -90,10 +132,10 @@ endfunction
 " commands
 "------------------------------------------------------------------------------
 command! MenuToggle             if &go=~'m'|set go-=m|else|set go+=m|endif
-command! FoldColumnToggle       :call Toggle_Fold_Column()
-command! StatusBarToggle        :call Toggle_Status_Bar()
-command! TabbarToggle           :call Toggle_Tabbar()
-command! MaximizeEditAreaToggle :call Toggle_Maximize_Editing_Area()
+command! FoldColumnToggle       :call s:Toggle_Fold_Column()
+command! StatusBarToggle        :call s:Toggle_Status_Bar()
+command! TabbarToggle           :call s:Toggle_Tabbar()
+command! MaximizeEditAreaToggle :call s:Toggle_Maximize_Editing_Area()
 
 if exists("&signcolumn")
   command! SignColumnToggle :call Toggle_SignColumn()
