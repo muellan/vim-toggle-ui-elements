@@ -45,9 +45,6 @@ endif
 
 
 "------------------------------------------------------------------------------
-command! -nargs=? Ctoggle call <sid>Toggle_Quickfix_List(<q-args>)
-command! -nargs=? Ltoggle call <sid>Toggle_Location_List(<q-args>)
-
 function! s:Toggle_Location_List(...)
   let l:height = 15
   if a:0 > 0 | let l:height = a:1 | endif
@@ -131,11 +128,13 @@ endfunction
 "------------------------------------------------------------------------------
 " commands
 "------------------------------------------------------------------------------
-command! MenuToggle             if &go=~'m'|set go-=m|else|set go+=m|endif
-command! FoldColumnToggle       :call s:Toggle_Fold_Column()
-command! StatusBarToggle        :call s:Toggle_Status_Bar()
-command! TabbarToggle           :call s:Toggle_Tabbar()
-command! MaximizeEditAreaToggle :call s:Toggle_Maximize_Editing_Area()
+command!          MenuToggle             if &go=~'m'|set go-=m|else|set go+=m|endif
+command!          FoldColumnToggle       call <sid>Toggle_Fold_Column()
+command!          StatusBarToggle        call <sid>Toggle_Status_Bar()
+command!          TabbarToggle           call <sid>Toggle_Tabbar()
+command!          MaximizeEditAreaToggle call <sid>Toggle_Maximize_Editing_Area()
+command! -nargs=? Ctoggle                call <sid>Toggle_Quickfix_List(<q-args>)
+command! -nargs=? Ltoggle                call <sid>Toggle_Location_List(<q-args>)
 
 if exists("&signcolumn")
   command! SignColumnToggle :call Toggle_SignColumn()
