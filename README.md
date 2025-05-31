@@ -26,3 +26,9 @@ This VIM plugin provides the following commands:
 
  - Ltoggle
    shows/hides the location list; optional argument: window height
+
+ - VCtoggle
+   shows/hides the quickfix list in a vertical window; optional argument: window width
+
+ - VLtoggle
+   shows/hides the location list in a vertical window; optional argument: window width

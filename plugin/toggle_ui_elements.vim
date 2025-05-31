@@ -45,10 +45,39 @@ endif
 
 
 "------------------------------------------------------------------------------
+function! s:Is_Loc_Window(nmbr)
+    return getbufvar(winbufnr(a:nmbr), "is_loclist") == 1
+endfunction
+
+function! s:Is_Qf_Window(nmbr)
+    if getwinvar(a:nmbr, "&filetype") == "qf"
+        return s:Is_Loc_Window(a:nmbr) ? 0 : 1
+    endif
+    return 0
+endfunction
+
+function! s:Qf_Window_Open() abort
+    for winnum in range(1, winnr('$'))
+        if s:Is_Qf_Window(winnum)
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
+function! s:Loc_Window_Open() abort
+    for winnum in range(1, winnr('$'))
+        if s:Is_Loc_Window(winnum)
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+
 function! s:Toggle_Location_List(...)
   let l:height = 15
   if a:0 > 0 | let l:height = a:1 | endif
-  if exists("s:qf_buffer_num")
+  if s:Loc_Window_Open()
     silent! lclose
   else
     execute "silent! lopen " . l:height
@@ -56,28 +85,34 @@ function! s:Toggle_Location_List(...)
 endfunction
 
 function! s:Toggle_Quickfix_List(...)
+  let l:height = 15
   if a:0 > 0 | let l:height = a:1 | endif
-  if exists("s:qf_buffer_num")
+  if s:Qf_Window_Open()
     silent! cclose
   else
-    execute "silent! botright copen " . l:height
+    execute "silent! copen " . l:height
   endif
 endfunction
 
-function s:Check_Quickfix()
-  if exists("s:qf_buffer_num") && expand("<abuf>") == s:qf_buffer_num
-    unlet! s:qf_buffer_num
+function! s:Toggle_Location_List_Vertical(...)
+  let l:width = 15
+  if a:0 > 0 | let l:width = a:1 | endif
+  if s:Loc_Window_Open()
+    silent! lclose
+  else
+    execute "silent! vertical botright lopen " . l:width
   endif
 endfunction
 
-function s:qf_buffer_num()
-  let s:qf_buffer_num = bufnr('$')
+function! s:Toggle_Quickfix_List_Vertical(...)
+  let l:width = 15
+  if a:0 > 0 | let l:width = a:1 | endif
+  if s:Qf_Window_Open()
+    silent! cclose
+  else
+    execute "silent! vertical botright copen " . l:width
+  endif
 endfunction
-
-augroup ListToggleCommands
-  autocmd BufWinEnter quickfix call s:qf_buffer_num()
-  autocmd BufWinLeave *        call s:Check_Quickfix()
-augroup END
 
 
 "------------------------------------------------------------------------------
@@ -135,6 +170,8 @@ command!          TabbarToggle           call <sid>Toggle_Tabbar()
 command!          MaximizeEditAreaToggle call <sid>Toggle_Maximize_Editing_Area()
 command! -nargs=? Ctoggle                call <sid>Toggle_Quickfix_List(<q-args>)
 command! -nargs=? Ltoggle                call <sid>Toggle_Location_List(<q-args>)
+command! -nargs=? VCtoggle               call <sid>Toggle_Quickfix_List_Vertical(<q-args>)
+command! -nargs=? VLtoggle               call <sid>Toggle_Location_List_Vertical(<q-args>)
 
 if exists("&signcolumn")
   command! SignColumnToggle :call Toggle_SignColumn()
