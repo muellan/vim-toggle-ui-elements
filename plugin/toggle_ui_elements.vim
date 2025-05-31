@@ -19,6 +19,18 @@ endfunction
 
 
 "------------------------------------------------------------------------------
+function! s:Toggle_Tabpanel()
+  if exists("&showtabpanel")
+    if &showtabpanel == 0
+      let &showtabpanel = 2
+    else
+      let &showtabpanel = 0
+    endif
+  endif
+endfunction
+
+
+"------------------------------------------------------------------------------
 function! s:Toggle_Fold_Column()
   if &foldcolumn ># 0
     let s:toggle_fold_column_last = &foldcolumn
@@ -167,6 +179,7 @@ command!          MenuToggle             if &go=~'m'|set go-=m|else|set go+=m|en
 command!          FoldColumnToggle       call <sid>Toggle_Fold_Column()
 command!          StatusBarToggle        call <sid>Toggle_Status_Bar()
 command!          TabbarToggle           call <sid>Toggle_Tabbar()
+command!          TabpanelToggle         call <sid>Toggle_Tabpanel()
 command!          MaximizeEditAreaToggle call <sid>Toggle_Maximize_Editing_Area()
 command! -nargs=? Ctoggle                call <sid>Toggle_Quickfix_List(<q-args>)
 command! -nargs=? Ltoggle                call <sid>Toggle_Location_List(<q-args>)

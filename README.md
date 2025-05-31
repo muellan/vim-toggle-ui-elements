@@ -14,6 +14,9 @@ This VIM plugin provides the following commands:
  - TabbarToggle
    shows/hides the tab bar
 
+ - TabpanelToggle
+   shows/hides the vertical tab panel introduced with VIM 9.1.1391
+
  - SignColumnToggle
    shows/hides the sign column
 
